@@ -20,7 +20,7 @@ public class Lesson {
     private String name;
     private int quota;
 
-    @OneToMany (mappedBy = "lesson")
+    @OneToMany(mappedBy = "lesson")
     private List<Course> courses = new ArrayList<>();
 
     public Lesson() {

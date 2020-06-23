@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"/>
+<body>
+<div class="container">
+    <div th:replace="fragments/homeButton :: homeButton"/>
+    <form>
+        <div class="card">
+            <div class="card-body">
+                <p>수강인원이 가득 찼습니다!</p>
+               <button type="return" class="btn btn-primary">돌아가기</button>
+
+            </div>
+        </div>
+    </form>
+    <br/>
+    <div th:replace="fragments/footer :: footer"/>
+</div> <!-- /container --> </body>
+</html>

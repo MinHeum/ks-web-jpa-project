@@ -6,14 +6,12 @@ import kr.ac.ks.app.domain.Student;
 import kr.ac.ks.app.repository.CourseRepository;
 import kr.ac.ks.app.repository.LessonRepository;
 import kr.ac.ks.app.repository.StudentRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -43,6 +41,11 @@ public class CourseController {
                                ) {
         Student student = studentRepository.findById(studentId).get();
         Lesson lesson = lessonRepository.findById(lessonId).get();
+
+        if (lesson.getQuota() <=0) {
+            return "courses/courseError";
+        }
+
         Course course = Course.createCourse(student,lesson);
         Course savedCourse = courseRepository.save(course);
         return "redirect:/courses";
@@ -77,8 +80,12 @@ public class CourseController {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + studentId));
         Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new  IllegalArgumentException("Invalid Lesson Id:" + lessonId));
 
+        if (lesson.getQuota()<=0) {
+            return "courses/courseError";
+        }
+
         course.setStudent(student);
-        course.setLesson(lesson);
+        course. setLesson(lesson);
 
         courseRepository.save(course);
         return "redirect:/courses";
@@ -87,12 +94,9 @@ public class CourseController {
     @GetMapping("courses/delete/{id}")
     public String deleteCourse(@PathVariable("id") Long id, Model model) {
         Course course = courseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid course Id:" + id));
-        
-        //Todo: 값이 지워졌을 때 lesson의 Quata 값 하나 증가시키기
+        Lesson lesson = course.getLesson();
+        lesson.setQuota(lesson.getQuota()+1);
 
-
-
-        //
         courseRepository.delete(course);
         model.addAttribute("courses", courseRepository.findAll());
         return "redirect:/courses";

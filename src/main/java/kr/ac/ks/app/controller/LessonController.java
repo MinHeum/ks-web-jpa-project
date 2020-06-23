@@ -1,7 +1,8 @@
 package kr.ac.ks.app.controller;
 
+import kr.ac.ks.app.domain.Course;
 import kr.ac.ks.app.domain.Lesson;
-import kr.ac.ks.app.domain.Student;
+import kr.ac.ks.app.repository.CourseRepository;
 import kr.ac.ks.app.repository.LessonRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,9 +18,11 @@ import java.util.List;
 public class LessonController {
 
     private final LessonRepository lessonRepository;
+    private final CourseRepository courseRepository;
 
-    public LessonController(LessonRepository lessonRepository) {
+    public LessonController(LessonRepository lessonRepository, CourseRepository courseRepository) {
         this.lessonRepository = lessonRepository;
+        this.courseRepository = courseRepository;
     }
 
     @GetMapping(value = "/lessons/new")
@@ -66,6 +69,12 @@ public class LessonController {
     @GetMapping("lessons/delete/{id}")
     public String deleteLesson(@PathVariable("id") Long id, Model model) {
         Lesson lesson = lessonRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid lesson Id:" + id));
+        List<Course> courseList = courseRepository.findAllByLessonIdIsLike(id);
+        for (Course c: courseList
+        ) {
+            courseRepository.delete(c);
+            lesson.setQuota(lesson.getQuota()+1);
+        }
         lessonRepository.delete(lesson);
         model.addAttribute("lessons", lessonRepository.findAll());
         return "redirect:/";

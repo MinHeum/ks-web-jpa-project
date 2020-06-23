@@ -23,7 +23,7 @@ public class AppApplication {
 		return (args) -> {
 			studentRepository.save(Student.builder().name("1").email("1@1.com").build());
 			studentRepository.save(Student.builder().name("2").email("2@2.com").build());
-			lessonRepository.save(Lesson.builder().name("L1").quota(2).build());
+			lessonRepository.save(Lesson.builder().name("L1").quota(1).build());
 			lessonRepository.save(Lesson.builder().name("L2").quota(15).build());
 		};
 	}
